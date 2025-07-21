@@ -1,0 +1,1 @@
+export { default as TripsMain } from "./components/TripsMain"; 
