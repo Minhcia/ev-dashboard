@@ -24,6 +24,8 @@ export async function fetchStationsData() {
         slot: 6,
         miles: 1.5,
         icon: "⚡",
+        lat: 21.030653,
+        lng: 105.800653,
       },
       {
         name: "Super Charger",
@@ -32,6 +34,8 @@ export async function fetchStationsData() {
         slot: 7,
         miles: 3.0,
         icon: "⚡",
+        lat: 21.025253,
+        lng: 105.810253,
       },
       {
         name: "Shell Station",
@@ -40,6 +44,8 @@ export async function fetchStationsData() {
         slot: 8,
         miles: 4.5,
         icon: "⚡",
+        lat: 21.035253,
+        lng: 105.805253,
       },
     ],
     vehicle: {

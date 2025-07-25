@@ -2,12 +2,17 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "@/shared/components/Sidebar";
 import { fetchTripsData } from "../api";
+import TripsMap from "./TripsMap";
 
 export default function TripsMain() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [selectedCarIndex, setSelectedCarIndex] = useState(0);
+  const [location, setLocation] = useState("");
+  const [destination, setDestination] = useState("");
+  const [originLatLng, setOriginLatLng] = useState<any>(null);
+  const [destLatLng, setDestLatLng] = useState<any>(null);
 
   useEffect(() => {
     fetchTripsData()
@@ -27,6 +32,15 @@ export default function TripsMain() {
   const { cars, tripInfo, trips } = data;
   const car = cars[selectedCarIndex];
 
+  function handleFindRoute() {
+    const findLatLng = (name: string) => {
+      const found = trips.find((t: any) => t.name.toLowerCase().includes(name.toLowerCase()));
+      return found && found.lat && found.lng ? { lat: found.lat, lng: found.lng } : null;
+    };
+    setOriginLatLng(findLatLng(location));
+    setDestLatLng(findLatLng(destination));
+  }
+
   return (
     <div className="flex min-h-screen bg-[#181A20] text-white">
       <Sidebar activeRoute="/my-trips" cars={cars} selectedCarIndex={selectedCarIndex} onCarSelect={setSelectedCarIndex} />
@@ -36,14 +50,13 @@ export default function TripsMain() {
         <div className="bg-[#23262F] rounded-xl p-6 flex gap-6">
           {/* Map section */}
           <div className="flex-1 flex flex-col gap-4">
-            <div className="bg-[#181A20] rounded-xl h-64 flex items-center justify-center mb-4">
-              {/* Map placeholder */}
-              <span className="text-[#1DE782] text-lg">[Map here]</span>
+            <div className="bg-[#181A20] rounded-xl h-64 flex items-center justify-center mb-4 overflow-hidden">
+              <TripsMap trips={trips} origin={originLatLng} destination={destLatLng} />
             </div>
             <div className="flex gap-2">
-              <input className="bg-[#181A20] rounded p-2 text-white flex-1" placeholder="Your Location" />
-              <input className="bg-[#181A20] rounded p-2 text-white flex-1" placeholder="Destination" />
-              <button className="bg-[#1DE782] text-black font-semibold rounded px-4">Get Directions</button>
+              <input className="bg-[#181A20] rounded p-2 text-white flex-1" placeholder="Your Location" value={location} onChange={e => setLocation(e.target.value)} />
+              <input className="bg-[#181A20] rounded p-2 text-white flex-1" placeholder="Destination" value={destination} onChange={e => setDestination(e.target.value)} />
+              <button className="bg-[#1DE782] text-black font-semibold rounded px-4" onClick={handleFindRoute}>Get Directions</button>
             </div>
           </div>
           {/* Trip Info */}

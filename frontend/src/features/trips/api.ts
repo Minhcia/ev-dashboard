@@ -28,6 +28,8 @@ export async function fetchTripsData() {
         parking: "Free",
         cost: "$0.59/kWh",
         method: "& cash",
+        lat: 21.030653,
+        lng: 105.800653,
       },
       {
         name: "Olsun Station",
@@ -36,6 +38,8 @@ export async function fetchTripsData() {
         parking: "Free",
         cost: "$0.00/Free",
         method: "Mastercard",
+        lat: 21.025253,
+        lng: 105.810253,
       },
     ],
   };

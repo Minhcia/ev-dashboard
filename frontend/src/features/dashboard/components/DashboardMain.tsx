@@ -1,8 +1,19 @@
 'use client';
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "@/shared/components/Sidebar";
 import { useDashboardData } from "../hooks/useDashboardData";
 import CarImage from "./CarImage";
+
+function getDistanceKm(lat1: number, lng1: number, lat2: number, lng2: number) {
+  const R = 6371; // km
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLng/2) * Math.sin(dLng/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
+}
 
 export default function DashboardMain() {
   const { data, loading, error } = useDashboardData();
@@ -15,6 +26,13 @@ export default function DashboardMain() {
   const cars = user.cars;
   const car = cars[selectedCarIndex];
   const { stats } = car;
+
+  // Center mặc định là trạm đầu tiên
+  const centerLatLng = stations[0]?.lat && stations[0]?.lng ? { lat: stations[0].lat, lng: stations[0].lng } : null;
+  // Lọc các trạm trong bán kính 10km từ centerLatLng
+  const stationsInRadius = centerLatLng
+    ? stations.filter((s: any) => s.lat && s.lng && getDistanceKm(centerLatLng.lat, centerLatLng.lng, s.lat, s.lng) <= 10)
+    : stations;
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-[#181A20] text-white">
@@ -109,8 +127,8 @@ export default function DashboardMain() {
             <div className="bg-[#23262F] rounded-xl p-4 md:p-6 flex-1">
               <div className="font-semibold mb-2">Stations list</div>
               <div className="flex flex-col gap-4">
-                {stations.map((station:any, i:number) => (
-                  <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between bg-[#181A20] rounded p-3 gap-2">
+                {stationsInRadius.map((station:any, i:number) => (
+                  <div key={i} className="flex items-center justify-between bg-[#181A20] rounded p-3">
                     <div className="flex items-center gap-3">
                       <div className="w-16 h-12 bg-gray-700 rounded" />
                       <div>
